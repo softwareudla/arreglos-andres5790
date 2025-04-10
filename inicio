@@ -1,0 +1,248 @@
+#include <stdio.h>
+#include <string.h>
+
+int SoloLetras(char cadena[])
+{
+  for (int i = 0; i < strlen(cadena); i++)
+  {
+    if (!((cadena[i] >= 'A' && cadena[i] <= 'Z') || (cadena[i] >= 'a' && cadena[i] <= 'z')))
+    {
+      return 0;
+    }
+    
+  }
+  return 1;
+}
+int main(int argc, char const *argv[])
+{
+  char buscar[30];
+  char estudiantes[5][30];
+  char asignaturas[3][30];
+  int nota[5][3], aprobado, reprobado, respuesta, valido, c;
+  float promedionota = 0, promediototal, p1, p2, p3;
+  int opcion, cont = 0, cnt = 0, con = 0, suma = 0, f = 0, len, p = 0;
+  int resultado, resultado2;
+
+  if (cont < 5)
+  {
+    while (1)
+    {
+      printf("Quiere ingresar un estudiante 1 = si 2 = no\n");
+      printf(">>");
+      resultado = scanf("%d", &opcion);
+      if (resultado == 1 && (opcion == 1 || opcion == 2))
+      {
+        break;
+      }
+      else
+      {
+        printf("Incorrecto. Solo se permite 1 o 2.\n");
+        while (getchar() != '\n')
+          ;
+      }
+    }
+
+    do
+    {
+      while (1)
+      {
+        printf("Ingrese el nombre del alumno %d: ", cont + 1);
+        fflush(stdin);
+        fgets(estudiantes[cont], 30, stdin);
+        len = strlen(estudiantes[cont]) - 1;
+        estudiantes[cont][len] = '\0';
+        if (SoloLetras(estudiantes[cont]))
+        {
+          break;
+        }
+        else
+        {
+          printf("Entrada invalida. Solo se permiten letras.\n");
+        }
+      }
+      cont++;
+      while (1)
+      {
+        printf("Quiere ingresar otro estudiante? 1 = Si 2 = No: ");
+        if (scanf("%d", &opcion) == 1 && (opcion == 1 || opcion == 2))
+        {
+          break;
+        }
+        else
+        {
+          printf("Opcion invalida. Intente de nuevo.\n");
+          while (getchar() != '\n')
+            ;
+        }
+      }
+
+    } while (opcion != 2);
+  }
+
+  if (cnt < 3)
+  {
+    do
+    {
+      while (1)
+      {
+        printf("Ingrese el nombre de la asignatura %d: ", cnt + 1);
+        fflush(stdin);
+        fgets(asignaturas[cnt], 30, stdin);
+        len = strlen(asignaturas[cnt]) - 1;
+        asignaturas[cnt][len] = '\0';
+        if (SoloLetras(asignaturas[cnt]))
+        {
+          break;
+        }
+        else
+        {
+          printf("Entrada invalida. Solo se permiten letras.\n");
+        }
+      }
+      cnt++;
+    } while (cnt != 3);
+  }
+  do
+  {
+    suma = 0;
+    printf("Ingrese el alumno que quiere ingresar notas:\n");
+    printf(">>");
+    fflush(stdin);
+    fgets(buscar, 30, stdin);
+    len = strlen(buscar) - 1;
+    buscar[len] = '\0';
+    for (int i = 0; i < cont; i++)
+    {
+      if (strcmp(estudiantes[i], buscar) == 0)
+      {
+        int alto = -1, bajo = 101;
+
+        for (int j = 0; j < cnt; j++)
+        {
+
+          do
+          {
+            printf("Ingrese la nota para %s (0-10): ", asignaturas[j]);
+            valido = scanf("%d", &nota[i][j]);
+
+            // Limpiar el buffer en caso de error
+            if (valido != 1)
+            {
+              printf("Entrada no valida. Intente de nuevo.\n");
+              while ((c = getchar()) != '\n' && c != EOF)
+                ;
+              continue;
+            }
+            if (nota[i][j] < 0 || nota[i][j] > 10)
+            {
+              printf("La nota debe estar entre 0 y 10. Intente de nuevo.\n");
+            }
+
+          } while (nota[i][j] < 0 || nota[i][j] > 10);
+
+          if (nota[i][j] > alto)
+          {
+            alto = nota[i][j];
+          }
+          if (nota[i][j] < bajo)
+          {
+            bajo = nota[i][j];
+          }
+          suma += nota[i][j];
+          promedionota = suma / 3;
+        }
+
+        printf("El estudiante %s  ", estudiantes[i]);
+        printf("Su promedio es de %2.f\n", promedionota);
+
+        printf("La nota mas alta es %d\n", alto);
+        printf("La nota mas baja es %d\n", bajo);
+
+        f = 1;
+        break;
+      }
+    }
+    if (cont >= 2)
+    {
+      while (1)
+      {
+        printf("Ingresar nota de otro alumno 1=si 2=no\n");
+        printf(">>");
+        resultado2 = scanf("%d", &respuesta);
+        if (resultado2 == 1 && (respuesta == 1 || respuesta == 2))
+        {
+          break;
+        }
+        else
+        {
+          printf("Incorrecto. Solo se permite 1 o 2.\n");
+          while (getchar() != '\n')
+            ;
+        }
+      }
+    }
+
+  } while (respuesta == 1);
+
+  if (f == 0)
+  {
+    printf("No existe ese alumno");
+  }
+ 
+  printf("\nPromedio de cada asignatura:\n");
+  for (int j = 0; j < cnt; j++)
+  {
+    suma = 0;
+    for (int i = 0; i < cont; i++)
+    {
+      suma = suma + nota[i][j];
+    }
+    promediototal = suma / cont ;
+    printf("%s: %.2f\n", asignaturas[j], promediototal);
+  }
+  printf("\nCantidad de aprobados y reprobados por materia.\n");
+  for (int j = 0; j < cnt; j++)
+  {
+    reprobado = 0;
+    aprobado = 0;
+    for (int i = 0; i < cont; i++)
+    {
+      if (nota[i][j] >= 6)
+      {
+        aprobado++;
+      }
+      else if (nota[i][j] < 6)
+      {
+        reprobado++;
+      }
+    }
+    printf("%s El total de reprobados es : %d\n", asignaturas[j], reprobado);
+    printf("%s El total de aprobados es : %d\n", asignaturas[j], aprobado);
+  }
+  printf("Ingrese cual materia quiere ver la nota mas alta\n");
+  printf(">>");
+  fflush(stdin);
+  fgets(buscar, 30, stdin);
+  len = strlen(buscar) - 1;
+  buscar[len] = '\0';
+  for (int j = 0; j < cnt; j++)
+    if (strcmp(asignaturas[j], buscar) == 0)
+    {
+      int alto = -1, bajo = 101;
+
+      for (int i = 0; i < cont; i++)
+      {
+        if (nota[i][j] > alto)
+        {
+          alto = nota[i][j];
+        }
+        if (nota[i][j] < bajo)
+        {
+          bajo = nota[i][j];
+        }
+      }
+      printf("La nota mas alta es %d\n", alto);
+      printf("La nota mas baja es %d\n", bajo);
+    }
+  return 0;
+}
